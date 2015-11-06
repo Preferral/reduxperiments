@@ -4,7 +4,8 @@ import { addTodo, completeTodo, setVisibilityFilter, changeTheme, VisibilityFilt
 import AddTodo from '../components/AddTodo'
 import TodoList from '../components/TodoList'
 import Footer from '../components/Footer'
-import { memoize, createMemoizedFunction } from '../memoize'
+// import { memoize, createMemoizedFunction } from '../memoize'
+import { createSelector } from 'reselect'
 
 function selectTodos(todos, filter) {
   console.log("Recalculating selectTodos");
@@ -23,14 +24,27 @@ function selectMatchingTodos(todos, search) {
   return todos.filter((todo) => { return todo.text.search(search) >= 0; });
 }
 
+const visibleTodosSelector = createSelector(
+  [(component) => component.props.todos, (component) => component.props.visibilityFilter],
+  selectTodos
+);
+
+const matchingTodosSelector = createSelector(
+  [(component) => component.visibleTodos(), (component) => component.state.search],
+  selectMatchingTodos
+);
+
 class App extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = { search: '' };
   }
 
-  visibleTodos = createMemoizedFunction(() => [this.props.todos, this.props.visibilityFilter], selectTodos);
-  matchingTodos = createMemoizedFunction(() => [this.visibleTodos(), this.state.search], selectMatchingTodos);
+  // visibleTodos = createMemoizedFunction(() => [this.props.todos, this.props.visibilityFilter], selectTodos);
+  // matchingTodos = createMemoizedFunction(() => [this.visibleTodos(), this.state.search], selectMatchingTodos);
+
+  visibleTodos = visibleTodosSelector.bind(this, this);
+  matchingTodos = matchingTodosSelector.bind(this, this);
 
   updateSearch = function(e) {
     this.setState({ search: e.target.value });
