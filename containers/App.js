@@ -5,6 +5,7 @@ import AddTodo from '../components/AddTodo'
 import TodoList from '../components/TodoList'
 import Footer from '../components/Footer'
 import { memoize, createMemoizedFunction } from '../memoize'
+import { createStructuredSelector } from 'reselect';
 
 function selectTodos(todos, filter) {
   console.log("Recalculating selectTodos");
@@ -75,15 +76,15 @@ App.propTypes = {
   ]).isRequired
 }
 
-// Which props do we want to inject, given the global state?
-// Note: use https://github.com/faassen/reselect for better performance.
-function select(state) {
-  return {
-    todos: state.todos,
-    visibilityFilter: state.visibilityFilter,
-    currentTheme: state.currentTheme
-  }
-}
+const todosSelector = state => state.todos;
+const visibilityFilterSelector = state => state.visibilityFilter;
+const currentThemeSelector = state => state.currentTheme;
+
+const select = createStructuredSelector({
+  todos: todosSelector,
+  visibilityFilter: visibilityFilterSelector,
+  currentTheme: currentThemeSelector
+});
 
 // Wrap the component to inject dispatch and state into it
 export default connect(select)(App)
