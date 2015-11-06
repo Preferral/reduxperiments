@@ -1,16 +1,17 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { addTodo, completeTodo, setVisibilityFilter, VisibilityFilters } from '../actions'
+import { addTodo, completeTodo, setVisibilityFilter, changeTheme, VisibilityFilters } from '../actions'
 import AddTodo from '../components/AddTodo'
 import TodoList from '../components/TodoList'
 import Footer from '../components/Footer'
 
 class App extends Component {
   render() {
+    console.log(this.props);
     // Injected by connect() call:
-    const { dispatch, visibleTodos, visibilityFilter } = this.props
+    const { dispatch, visibleTodos, visibilityFilter, currentTheme } = this.props
     return (
-      <div>
+      <div className={currentTheme}>
         <AddTodo
           onAddClick={text =>
             dispatch(addTodo(text))
@@ -25,6 +26,7 @@ class App extends Component {
           onFilterChange={nextFilter =>
             dispatch(setVisibilityFilter(nextFilter))
           } />
+        <button onClick={() => dispatch(changeTheme())}>Change Theme</button>
       </div>
     )
   }
@@ -58,7 +60,8 @@ function selectTodos(todos, filter) {
 function select(state) {
   return {
     visibleTodos: selectTodos(state.todos, state.visibilityFilter),
-    visibilityFilter: state.visibilityFilter
+    visibilityFilter: state.visibilityFilter,
+    currentTheme: state.currentTheme
   }
 }
 
