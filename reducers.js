@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { ADD_TODO, COMPLETE_TODO, SET_VISIBILITY_FILTER, CHANGE_THEME, VisibilityFilters } from './actions'
+import { ADD_TODO, COMPLETE_TODO, SET_VISIBILITY_FILTER, CHANGE_THEME, VisibilityFilters, UPDATE_SEARCH } from './actions'
 const { SHOW_ALL } = VisibilityFilters
 
 function visibilityFilter(state = SHOW_ALL, action) {
@@ -43,11 +43,21 @@ function currentTheme(state = 'theme-green', action) {
   }
 }
 
+function searchTerm(state = '', action) {
+  switch (action.type) {
+    case UPDATE_SEARCH:
+      return action.searchTerm;
+    default:
+      return state;
+  }
+}
+
 
 const todoApp = combineReducers({
   visibilityFilter,
   todos,
-  currentTheme
+  currentTheme,
+  searchTerm
 })
 
 export default todoApp

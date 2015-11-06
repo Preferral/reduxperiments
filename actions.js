@@ -6,6 +6,7 @@ export const ADD_TODO = 'ADD_TODO'
 export const COMPLETE_TODO = 'COMPLETE_TODO'
 export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
 export const CHANGE_THEME = 'CHANGE_THEME'
+export const UPDATE_SEARCH = 'UPDATE_SEARCH';
 
 /*
  * other constants
@@ -35,4 +36,11 @@ export function setVisibilityFilter(filter) {
 
 export function changeTheme() {
   return { type: CHANGE_THEME };
+}
+
+export function updateSearch(searchTerm) {
+  return {
+    type: UPDATE_SEARCH,
+    searchTerm
+  };
 }
