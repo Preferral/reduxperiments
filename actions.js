@@ -5,6 +5,7 @@
 export const ADD_TODO = 'ADD_TODO'
 export const COMPLETE_TODO = 'COMPLETE_TODO'
 export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
+export const CHANGE_THEME = 'CHANGE_THEME'
 
 /*
  * other constants
@@ -30,4 +31,8 @@ export function completeTodo(index) {
 
 export function setVisibilityFilter(filter) {
   return { type: SET_VISIBILITY_FILTER, filter }
+}
+
+export function changeTheme() {
+  return { type: CHANGE_THEME };
 }
