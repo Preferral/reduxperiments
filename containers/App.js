@@ -6,10 +6,11 @@ import TodoList from '../components/TodoList'
 import Footer from '../components/Footer'
 
 class App extends Component {
+
   render() {
     console.log(this.props);
     // Injected by connect() call:
-    const { dispatch, visibleTodos, visibilityFilter, currentTheme } = this.props
+    const { dispatch, todos, visibilityFilter, currentTheme } = this.props
     return (
       <div className={currentTheme}>
         <AddTodo
@@ -17,7 +18,8 @@ class App extends Component {
             dispatch(addTodo(text))
           } />
         <TodoList
-          todos={visibleTodos}
+          todos={todos}
+          filter={visibilityFilter}
           onTodoClick={index =>
             dispatch(completeTodo(index))
           } />
@@ -33,7 +35,7 @@ class App extends Component {
 }
 
 App.propTypes = {
-  visibleTodos: PropTypes.arrayOf(PropTypes.shape({
+  todos: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
     completed: PropTypes.bool.isRequired
   })),
@@ -44,22 +46,11 @@ App.propTypes = {
   ]).isRequired
 }
 
-function selectTodos(todos, filter) {
-  switch (filter) {
-    case VisibilityFilters.SHOW_ALL:
-      return todos
-    case VisibilityFilters.SHOW_COMPLETED:
-      return todos.filter(todo => todo.completed)
-    case VisibilityFilters.SHOW_ACTIVE:
-      return todos.filter(todo => !todo.completed)
-  }
-}
-
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
 function select(state) {
   return {
-    visibleTodos: selectTodos(state.todos, state.visibilityFilter),
+    todos: state.todos,
     visibilityFilter: state.visibilityFilter,
     currentTheme: state.currentTheme
   }
