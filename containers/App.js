@@ -85,7 +85,7 @@ const matchingVisibleTodosSelector = createSelector(
   selectMatchingTodos
 );
 
-const select = createStructuredSelector({
+export const select = createStructuredSelector({
   matchingVisibleTodos: matchingVisibleTodosSelector,
   visibilityFilter: visibilityFilterSelector,
   currentTheme: currentThemeSelector,
