@@ -24,9 +24,8 @@ class Pane extends Component {
           } />
         <Footer
           filter={visibilityFilter}
-          onFilterChange={nextFilter =>
-            dispatch(setVisibilityFilter(nextFilter))
-          } />
+          onFilterChange={setVisibilityFilter}
+        />
         </div>
     );
   }
