@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
-import { ADD_TODO, COMPLETE_TODO, SET_VISIBILITY_FILTER, CHANGE_THEME, VisibilityFilters, UPDATE_SEARCH } from './actions'
+import { ADD_PANE, ADD_TODO, COMPLETE_TODO, SET_PANE_VISIBILITY_FILTER, CHANGE_THEME, VisibilityFilters, UPDATE_PANE_SEARCH } from './actions'
 const { SHOW_ALL } = VisibilityFilters
 
 function visibilityFilter(state = SHOW_ALL, action) {
   switch (action.type) {
-    case SET_VISIBILITY_FILTER:
+    case SET_PANE_VISIBILITY_FILTER:
       return action.filter
     default:
       return state
@@ -45,19 +45,37 @@ function currentTheme(state = 'theme-green', action) {
 
 function searchTerm(state = '', action) {
   switch (action.type) {
-    case UPDATE_SEARCH:
+    case UPDATE_PANE_SEARCH:
       return action.searchTerm;
     default:
       return state;
   }
 }
 
+const paneReducer = combineReducers({
+  visibilityFilter,
+  searchTerm
+});
+
+function panes(state = [], action) {
+  console.log("running panes reducer for action: ");
+  console.log(action);
+  switch(action.type) {
+    case ADD_PANE:
+      console.log("adding pane");
+      return state.concat(paneReducer(undefined, {type: null}));
+    case SET_PANE_VISIBILITY_FILTER:
+    case UPDATE_PANE_SEARCH:
+      return state.map((pane, idx) => idx === action.index ? paneReducer(pane, action) : pane);
+    default:
+      return state;
+  }
+}
 
 const todoApp = combineReducers({
-  visibilityFilter,
+  panes,
   todos,
   currentTheme,
-  searchTerm
 })
 
 export default todoApp

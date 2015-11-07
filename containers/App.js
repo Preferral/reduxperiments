@@ -1,30 +1,22 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { addTodo, completeTodo, setVisibilityFilter, changeTheme, VisibilityFilters, updateSearch } from '../actions'
+import { addTodo, completeTodo, setPaneVisibilityFilter, changeTheme, VisibilityFilters, updatePaneSearch, addPane } from '../actions'
 import AddTodo from '../components/AddTodo'
 import TodoList from '../components/TodoList'
 import Footer from '../components/Footer'
 import { memoize, createMemoizedFunction } from '../memoize'
 import { createSelector, createStructuredSelector } from 'reselect';
 
-class App extends Component {
-
-  updateSearch = function(e) {
-    const { dispatch } = this.props;
-    dispatch(updateSearch(e.target.value));
-  }
+class Pane extends Component {
 
   render() {
-    console.log(this.props);
-    // Injected by connect() call:
-    const { dispatch, matchingVisibleTodos, currentTheme, searchTerm, visibilityFilter } = this.props
+    const { dispatch, updateSearch, setVisibilityFilter, searchTerm, visibilityFilter, matchingVisibleTodos } = this.props;
+
     return (
-      <div className={currentTheme}>
-        Search: <input type="text" value={searchTerm} onChange={this.updateSearch.bind(this)}/><br/>
+      <div>
+        Search: <input type="text" value={searchTerm} onChange={updateSearch}/><br/>
         <AddTodo
-          onAddClick={text =>
-            dispatch(addTodo(text))
-          } />
+          onAddClick={text => dispatch(addTodo(text)) } />
         <TodoList
           todos={matchingVisibleTodos}
           onTodoClick={index =>
@@ -35,14 +27,56 @@ class App extends Component {
           onFilterChange={nextFilter =>
             dispatch(setVisibilityFilter(nextFilter))
           } />
+        </div>
+    );
+  }
+}
+
+
+class App extends Component {
+
+  render() {
+    console.log(this.props);
+    const { dispatch, panes, currentTheme, matchingVisibleTodos } = this.props
+
+    var createUpdatePaneSearch = function(paneIdx) {
+      return (e) => {
+        dispatch(updatePaneSearch(paneIdx, e.target.value));
+      };
+    }
+
+    var createSetVisibilityFilter = function(paneIdx) {
+      return (filter) => {
+        dispatch(setPaneVisibilityFilter(paneIdx, filter));
+      }
+    }
+
+    let paneComponents = panes.map((pane, idx) =>
+      <Pane
+        dispatch={dispatch}
+        updateSearch={createUpdatePaneSearch(idx)}
+        setVisibilityFilter={createSetVisibilityFilter(idx)}
+        searchTerm={pane.searchTerm}
+        visibilityFilter={pane.visibilityFilter}
+        matchingVisibleTodos={matchingVisibleTodos[idx]}
+      />
+    );
+
+    // console.log("Pane components are:");
+    // console.log(paneComponents);
+
+    return (
+      <div className={currentTheme}>
+        {paneComponents}
+        <button onClick={() => dispatch(addPane())}>Add Pane</button>
         <button onClick={() => dispatch(changeTheme())}>Change Theme</button>
       </div>
     )
   }
 }
 
-App.propTypes = {
-  todos: PropTypes.arrayOf(PropTypes.shape({
+Pane.propTypes = {
+  matchingVisibleTodos: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
     completed: PropTypes.bool.isRequired
   })),
@@ -71,25 +105,30 @@ function selectMatchingTodos(todos, search) {
 }
 
 const todosSelector = state => state.todos;
-const visibilityFilterSelector = state => state.visibilityFilter;
+// const visibilityFilterSelector = state => state.visibilityFilter;
 const currentThemeSelector = state => state.currentTheme;
-const searchTermSelector = state => state.searchTerm;
+// const searchTermSelector = state => state.searchTerm;
+const panesSelector = state => state.panes;
 
-const visibleTodosSelector = createSelector(
-  [todosSelector, visibilityFilterSelector],
-  selectVisibleTodos
-);
+// const visibleTodosSelector = createSelector(
+//   [todosSelector, visibilityFilterSelector],
+//   selectVisibleTodos
+// );
+
+// const matchingVisibleTodosSelector = createSelector(
+//   [visibleTodosSelector, searchTermSelector],
+//   selectMatchingTodos
+// );
 
 const matchingVisibleTodosSelector = createSelector(
-  [visibleTodosSelector, searchTermSelector],
-  selectMatchingTodos
+  [state => state.panes, state => state.todos],
+  (panes, todos) => panes.map( (pane) => selectMatchingTodos(selectVisibleTodos(todos, pane.visibilityFilter), pane.searchTerm) )
 );
 
 const select = createStructuredSelector({
+  panes: panesSelector,
   matchingVisibleTodos: matchingVisibleTodosSelector,
-  visibilityFilter: visibilityFilterSelector,
   currentTheme: currentThemeSelector,
-  searchTerm: searchTermSelector
 });
 
 // Wrap the component to inject dispatch and state into it
