@@ -1,35 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { addTodo, completeTodo, setPaneVisibilityFilter, changeTheme, VisibilityFilters, updatePaneSearch, addPane } from '../actions'
-import AddTodo from '../components/AddTodo'
-import TodoList from '../components/TodoList'
-import Footer from '../components/Footer'
+import { setPaneVisibilityFilter, changeTheme, VisibilityFilters, updatePaneSearch, addPane } from '../actions'
 import { memoize, createMemoizedFunction } from '../memoize'
 import { createSelector, createStructuredSelector } from 'reselect';
-
-class Pane extends Component {
-
-  render() {
-    const { dispatch, updateSearch, setVisibilityFilter, searchTerm, visibilityFilter, matchingVisibleTodos } = this.props;
-
-    return (
-      <div>
-        Search: <input type="text" value={searchTerm} onChange={updateSearch}/><br/>
-        <AddTodo
-          onAddClick={text => dispatch(addTodo(text)) } />
-        <TodoList
-          todos={matchingVisibleTodos}
-          onTodoClick={index =>
-            dispatch(completeTodo(index))
-          } />
-        <Footer
-          filter={visibilityFilter}
-          onFilterChange={setVisibilityFilter}
-        />
-        </div>
-    );
-  }
-}
+import Pane from '../components/Pane';
 
 
 class App extends Component {
@@ -61,9 +35,6 @@ class App extends Component {
       />
     );
 
-    // console.log("Pane components are:");
-    // console.log(paneComponents);
-
     return (
       <div className={currentTheme}>
         {paneComponents}
@@ -74,17 +45,7 @@ class App extends Component {
   }
 }
 
-Pane.propTypes = {
-  matchingVisibleTodos: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
-  })),
-  visibilityFilter: PropTypes.oneOf([
-    'SHOW_ALL',
-    'SHOW_COMPLETED',
-    'SHOW_ACTIVE'
-  ]).isRequired
-}
+
 
 function selectVisibleTodos(todos, filter) {
   console.log("Recalculating selectTodos");
