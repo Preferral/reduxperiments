@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux'
 import { ADD_PANE, ADD_TODO, COMPLETE_TODO, SET_PANE_VISIBILITY_FILTER, CHANGE_THEME, VisibilityFilters, UPDATE_PANE_SEARCH } from './actions'
+import combineCollectionReducers from './combineCollectionReducers'
+
 const { SHOW_ALL } = VisibilityFilters
 
 function visibilityFilter(state = SHOW_ALL, action) {
@@ -11,8 +13,17 @@ function visibilityFilter(state = SHOW_ALL, action) {
   }
 }
 
-function todos(state = [], action) {
-  switch (action.type) {
+function todoElementReducer(state, action) {
+  switch(action.type) {
+    case COMPLETE_TODO:
+      return Object.assign({}, state, { completed: true });
+    default:
+      return state;
+  }
+}
+
+function todoCollectionReducer(state = [], action) {
+  switch(action.type) {
     case ADD_TODO:
       return [
         ...state,
@@ -21,16 +32,8 @@ function todos(state = [], action) {
           completed: false
         }
       ]
-    case COMPLETE_TODO:
-      return [
-        ...state.slice(0, action.index),
-        Object.assign({}, state[action.index], {
-          completed: true
-        }),
-        ...state.slice(action.index + 1)
-      ]
     default:
-      return state
+      return state;
   }
 }
 
@@ -52,25 +55,22 @@ function searchTerm(state = '', action) {
   }
 }
 
-const paneReducer = combineReducers({
+const paneElementReducer = combineReducers({
   visibilityFilter,
   searchTerm
 });
 
-function panes(state = [], action) {
-  console.log("running panes reducer for action: ");
-  console.log(action);
+function paneCollectionReducer(state = [], action) {
   switch(action.type) {
     case ADD_PANE:
-      console.log("adding pane");
-      return state.concat(paneReducer(undefined, {type: null}));
-    case SET_PANE_VISIBILITY_FILTER:
-    case UPDATE_PANE_SEARCH:
-      return state.map((pane, idx) => idx === action.index ? paneReducer(pane, action) : pane);
+      return state.concat(paneElementReducer(undefined, {type: null}));
     default:
       return state;
   }
 }
+
+const panes = combineCollectionReducers(paneCollectionReducer, paneElementReducer);
+const todos = combineCollectionReducers(todoCollectionReducer, todoElementReducer);
 
 const todoApp = combineReducers({
   panes,
