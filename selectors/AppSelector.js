@@ -24,7 +24,7 @@ const visibleTodosForFilterFactorySelector = createSelector(
 
 const matchingVisibleTodosForPaneFactorySelector = createSelector(
   visibleTodosForFilterFactorySelector,
-  (visibleTodosForFilterFactory) => _.memoize((args) => {
+  (visibleTodosForFilterFactory) => _.memoize((pane) => {
     const filter = pane.visibilityFilter;
     const visibleTodos = visibleTodosForFilterFactory(filter)
     const searchTerm = pane.searchTerm;
