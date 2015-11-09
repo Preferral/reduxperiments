@@ -6,7 +6,18 @@ import Footer from './Footer';
 
 class Pane extends Component {
   render() {
-    const { dispatch, updateSearch, setVisibilityFilter, searchTerm, visibilityFilter, matchingVisibleTodos } = this.props;
+    const {
+      dispatch,
+      pane,
+      matchingVisibleTodosForPaneFactory,
+      updateSearch,
+      setVisibilityFilter,
+      ...props
+    } = this.props;
+
+    const { visibilityFilter, searchTerm } = pane;
+
+    const visibleTodos = matchingVisibleTodosForPaneFactory(pane);
 
     return (
       <div>
@@ -14,7 +25,7 @@ class Pane extends Component {
         <br />
         <AddTodo onAddClick={ text => dispatch(addTodo(text)) } />
         <TodoList
-          todos={matchingVisibleTodos}
+          todos={visibleTodos}
           onTodoClick={ index => dispatch(completeTodo(index)) }
         />
         <Footer

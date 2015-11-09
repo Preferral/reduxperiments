@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import { ADD_PANE, SET_PANE_VISIBILITY_FILTER, VisibilityFilters, UPDATE_PANE_SEARCH } from '../actions'
 import combineCollectionReducers from './combineCollectionReducers'
+import uid from 'uid';
 
 const { SHOW_ALL } = VisibilityFilters
 
@@ -23,6 +24,7 @@ function visibilityFilter(state = SHOW_ALL, action) {
 }
 
 const paneElementReducer = combineReducers({
+  key: () => { return uid() },
   visibilityFilter,
   searchTerm
 });
