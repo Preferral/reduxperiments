@@ -17,7 +17,12 @@
 export default function combineCollectionReducers(collectionReducer, elementReducer) {
   return function(state = collectionReducer(undefined, { type: null }), action) {
     if(action.index !== undefined) {
-      return state.map((element, idx) => idx === action.index ? elementReducer(element, action) : element);
+      let oldElement = state[action.index];
+      let newElement = elementReducer(oldElement, action);
+      if(newElement !== oldElement) {
+        return state.map((element, idx) => idx === action.index ? newElement : element);
+      }
+      return state;
     }
     return collectionReducer(state, action);
   }

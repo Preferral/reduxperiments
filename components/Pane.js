@@ -17,10 +17,14 @@ class Pane extends Component {
 
     const { visibilityFilter, searchTerm } = pane;
 
-    const visibleTodos = matchingVisibleTodosForPaneFactory(pane);
+    console.log("Rendering pane: ")
+    console.log(pane);
+
+    const visibleTodos = matchingVisibleTodosForPaneFactory(visibilityFilter, searchTerm);
 
     return (
       <div>
+        {pane.key}
         Search: <input type="text" value={searchTerm} onChange={updateSearch} />
         <br />
         <AddTodo onAddClick={ text => dispatch(addTodo(text)) } />
@@ -36,17 +40,5 @@ class Pane extends Component {
     );
   }
 }
-
-Pane.propTypes = {
-  matchingVisibleTodos: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
-  })),
-  visibilityFilter: PropTypes.oneOf([
-    'SHOW_ALL',
-    'SHOW_COMPLETED',
-    'SHOW_ACTIVE'
-  ]).isRequired
-};
 
 export default Pane;
