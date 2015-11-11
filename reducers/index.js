@@ -1,10 +1,15 @@
 import { combineReducers } from 'redux'
-import { currentTheme } from './CurrentThemeReducer';
-import { todos } from './TodosReducer';
-import { panes } from './PanesReducer';
+
+import fileBuffersReducer from "./fileBuffers.js"
+import windowsReducer from "./windows.js"
+import panesReducer from "./panes.js"
+import tabsReducer from "./tabs.js"
+import appReducer from "./app.js"
 
 export default combineReducers({
-  panes,
-  todos,
-  currentTheme,
-});
+  app: appReducer,
+  fileBuffers: fileBuffersReducer,
+  windows: windowsReducer,
+  panes: panesReducer,
+  tabs: tabsReducer
+})

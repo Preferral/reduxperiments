@@ -1,49 +1,53 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { setPaneVisibilityFilter, changeTheme, VisibilityFilters, updatePaneSearch, addPane } from '../actions'
-import { memoize, createMemoizedFunction } from '../memoize'
-import { createSelector, createStructuredSelector } from 'reselect';
-import { appSelector } from '../selectors/AppSelector';
-import Pane from '../components/Pane';
 
+import { addWindow } from '../actions.js'
+import EditorWindow from '../components/Window.js'
+import { addPaneToWindow, addTabToPane } from '../actions.js'
 
 class App extends Component {
 
   render() {
-    const { dispatch, panes, currentTheme, ...props } = this.props
-
-    var createUpdatePaneSearch = function(paneIdx) {
-      return (e) => {
-        dispatch(updatePaneSearch(paneIdx, e.target.value));
-      };
-    }
-
-    var createSetVisibilityFilter = function(paneIdx) {
-      return (filter) => {
-        dispatch(setPaneVisibilityFilter(paneIdx, filter));
-      }
-    }
-
-    let paneComponents = panes.map((pane, idx) =>
-      <Pane
-        key={pane.key}
-        dispatch={dispatch}
-        pane={pane}
-        updateSearch={createUpdatePaneSearch(idx)}
-        setVisibilityFilter={createSetVisibilityFilter(idx)}
-        {...props}
+    const { windows, dispatch } = this.props;
+    const windowComponents = windows.map((window) => {
+      return <EditorWindow
+        key={window.key}
+        panes={window.panes}
+        addPane={() => dispatch(addPaneToWindow(window.key))}
+        addTabToPane={(paneId) => dispatch(addTabToPane(paneId))}
       />
-    );
+    });
 
     return (
-      <div className={currentTheme}>
-        {paneComponents}
-        <button onClick={() => dispatch(addPane())}>Add Pane</button>
-        <button onClick={() => dispatch(changeTheme())}>Change Theme</button>
+      <div className="app">
+        <button onClick={()=>dispatch(addWindow())}>Add Window</button>
+        <br/>
+        {windowComponents}
       </div>
     )
   }
 }
 
-// Wrap the component to inject dispatch and state into it
-export default connect(appSelector)(App);
+let mapStateToProps = function(state) {
+  console.log("Mapping state to props");
+  return {
+    windows: state.app.windowIds.map((id) => {
+      const oldWindow = state.windows[id];
+      const mappedWindow = Object.assign({}, oldWindow);
+      mappedWindow.key = id;
+      mappedWindow.panes = oldWindow.paneIds.map((paneId) => {
+        const oldPane = state.panes[paneId];
+        const mappedPane = Object.assign({}, oldPane);
+        mappedPane.key = paneId;
+        mappedPane.tabs = oldPane.tabIds.map((tabId) => {
+          const oldTab = state.tabs[tabId];
+          return Object.assign({}, oldTab, { key: tabId, fileBuffer: Object.assign({}, state.fileBuffers[oldTab.fileBufferId], { id: oldTab.fileBufferId }) });
+        });
+        return mappedPane;
+      });
+      return mappedWindow;
+    })
+  }
+}
+
+export default connect(mapStateToProps)(App);

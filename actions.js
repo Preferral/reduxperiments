@@ -1,52 +1,22 @@
-/*
- * action types
- */
+import uid from 'uid'
 
-export const ADD_TODO = 'ADD_TODO'
-export const COMPLETE_TODO = 'COMPLETE_TODO'
-export const SET_PANE_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
-export const CHANGE_THEME = 'CHANGE_THEME'
-export const UPDATE_PANE_SEARCH = 'UPDATE_SEARCH';
-export const ADD_PANE = 'ADD_PANE'
+export const ADD_WINDOW='ADD_WINDOW';
+export const ADD_PANE_TO_WINDOW='ADD_PANE_TO_WINDOW';
+export const ADD_TAB_TO_PANE='ADD_TAB_TO_PANE';
+export const UPDATE_FILE_BUFFER_TEXT='UPDATE_FILE_BUFFER_TEXT';
 
-/*
- * other constants
- */
-
-export const VisibilityFilters = {
-  SHOW_ALL: 'SHOW_ALL',
-  SHOW_COMPLETED: 'SHOW_COMPLETED',
-  SHOW_ACTIVE: 'SHOW_ACTIVE'
+export function addWindow() {
+  return { type: ADD_WINDOW, id: uid() };
 }
 
-/*
- * action creators
- */
-
-export function addPane() {
-  return { type: ADD_PANE };
+export function addPaneToWindow(windowId) {
+  return { type: ADD_PANE_TO_WINDOW, id: uid(), windowId: windowId };
 }
 
-export function addTodo(text) {
-  return { type: ADD_TODO, text }
+export function addTabToPane(paneId) {
+  return { type: ADD_TAB_TO_PANE, id: uid(), paneId: paneId };
 }
 
-export function completeTodo(index) {
-  return { type: COMPLETE_TODO, index }
-}
-
-export function setPaneVisibilityFilter(paneIdx, filter) {
-  return { type: SET_PANE_VISIBILITY_FILTER, index: paneIdx, filter }
-}
-
-export function changeTheme() {
-  return { type: CHANGE_THEME };
-}
-
-export function updatePaneSearch(paneIdx, searchTerm) {
-  return {
-    type: UPDATE_PANE_SEARCH,
-    index: paneIdx,
-    searchTerm
-  };
+export function updateFileBufferText(fileBufferId, text) {
+  return { type: UPDATE_FILE_BUFFER_TEXT, id: fileBufferId, newText: text };
 }
