@@ -2,9 +2,11 @@ import { compose, createStore } from 'redux';
 import rootReducer from '../reducers'
 import { devTools } from 'redux-devtools';
 
+export const USE_DEV_TOOLS = false;
+
 export default function configureStore(initialState) {
 
-  const finalCreateStore = compose(devTools())(createStore);
+  const finalCreateStore = USE_DEV_TOOLS ? compose(devTools())(createStore) : createStore;
 
   const store = finalCreateStore(rootReducer, initialState)
 
