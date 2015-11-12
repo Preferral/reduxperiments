@@ -11,7 +11,7 @@ class EditorWindow extends Component {
     const paneComponents = panes.map((pane) => {
       return <Pane
         addTab={() => this.props.addTabToPane(pane.key)}
-        tabs={pane.tabs}
+        tabIds={pane.tabIds}
         key={pane.key}
       />
     });

@@ -5,14 +5,14 @@ import { updateFileBufferText } from '../actions.js';
 class Tab extends Component {
 
   render() { // fileBuffer, scrollPosition
-    const { dispatch, fileBuffer } = this.props;
+    const { dispatch, fileBufferId, fileBuffer } = this.props;
     return (
       <div className="tab">
         <textarea
           rows="4"
           cols="26"
           onChange={(e) => {
-            let action = updateFileBufferText(fileBuffer.id, e.target.value);
+            let action = updateFileBufferText(fileBufferId, e.target.value);
             dispatch(action);
           }}
           value={fileBuffer.text}
@@ -22,6 +22,15 @@ class Tab extends Component {
   }
 }
 
+function mapStateToProps(state, existingProps) {
+  console.log("existing tab props are:");
+  console.log(existingProps);
+  const tab = state.tabs[existingProps.tabId];
+  return {
+    fileBuffer: state.fileBuffers[tab.fileBufferId],
+    fileBufferId: tab.fileBufferId
 
+  }
+}
 
-export default connect()(Tab);
+export default connect(mapStateToProps)(Tab);

@@ -4,12 +4,11 @@ import Tab from './Tab.js';
 
 class Pane extends Component {
   render() {
-    const { tabs, addTab } = this.props;
-    const tabComponents = tabs.map((tab) => {
-      return <Tab
-        key={tab.key}
-        fileBuffer={tab.fileBuffer}
-      />
+    const { tabIds, addTab } = this.props;
+    console.log("pane props are:");
+    console.log(this.props);
+    const tabComponents = tabIds.map((tabId) => {
+      return <Tab tabId={tabId}/>
     });
 
     return (
