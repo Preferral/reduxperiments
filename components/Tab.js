@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { updateFileBufferText } from '../actions.js';
+import { updateFileBufferText, loadFileBufferInTab } from '../actions.js';
 
 class Tab extends Component {
 
-  render() { // fileBuffer, scrollPosition
+  render() {
+    console.log("Rendering a tab component");
     const { dispatch, fileBufferId, fileBuffer } = this.props;
-    return (
-      <div className="tab">
+    let textarea = null;
+    if(fileBufferId) {
+      textarea = (
         <textarea
           rows="4"
           cols="26"
@@ -17,19 +19,36 @@ class Tab extends Component {
           }}
           value={fileBuffer.text}
         />
+      )
+    }
+
+
+    return (
+      <div className="tab">
+        <select onChange={(e) => dispatch(loadFileBufferInTab(this.props.tabId, e.target.value))}>
+          <option>Select a FileBuffer</option>
+          { this.props.fileBufferKeys.map((key) => <option value={key}>{key}</option>) }
+        </select>
+        {textarea}
       </div>
     );
   }
 }
 
 function mapStateToProps(state, existingProps) {
-  console.log("existing tab props are:");
-  console.log(existingProps);
   const tab = state.tabs[existingProps.tabId];
-  return {
-    fileBuffer: state.fileBuffers[tab.fileBufferId],
-    fileBufferId: tab.fileBufferId
-
+  const fileBufferKeys =  Object.keys(state.fileBuffers);
+  if(tab.fileBufferId) {
+    return {
+      fileBuffer: state.fileBuffers[tab.fileBufferId],
+      fileBufferId: tab.fileBufferId,
+      fileBufferKeys: fileBufferKeys
+    }
+  }
+  else {
+    return {
+      fileBufferKeys: fileBufferKeys
+    }
   }
 }
 

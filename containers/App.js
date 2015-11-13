@@ -4,12 +4,14 @@ import { createSelector } from 'reselect';
 
 import { addWindow } from '../actions.js'
 import EditorWindow from '../components/Window.js'
-import { addPaneToWindow, addTabToPane } from '../actions.js'
+import { addPaneToWindow, addTabToPane,addFileBuffer } from '../actions.js'
+
 
 class App extends Component {
 
   render() {
-    const { windows, dispatch } = this.props;
+    console.log("Rendering AppComponent");
+    const { windows, dispatch, fileBufferKeys } = this.props;
     const windowComponents = windows.map((window) => {
       return <EditorWindow
         key={window.key}
@@ -21,6 +23,7 @@ class App extends Component {
 
     return (
       <div className="app">
+        <button onClick={()=>dispatch(addFileBuffer())}>Add FileBuffer</button>
         <button onClick={()=>dispatch(addWindow())}>Add Window</button>
         <br/>
         {windowComponents}
@@ -36,7 +39,7 @@ const windowsSelector = (state) => state.windows;
 const mapStateToProps = createSelector(
   [appSelector, panesSelector, windowsSelector],
   (app, panes, windows) => {
-    console.log("Mapping state to props");
+    console.log("Recalculating main selector");
     const unflattened =  {
       windows: app.windowIds.map((id) => {
         const oldWindow = windows[id];
