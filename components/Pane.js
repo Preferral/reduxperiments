@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import {addTabToPane} from '../actions.js'
 
 import Tab from './Tab.js';
 
 class Pane extends Component {
   render() {
-    const { tabIds, addTab } = this.props;
     console.log("Rendering a Pane component");
-    const tabComponents = tabIds.map((tabId) => {
+    const { dispatch, pane, paneId } = this.props;
+    const tabComponents = pane.tabIds.map((tabId) => {
       return <Tab tabId={tabId}/>
     });
 
     return (
       <div className="pane">
-        <button onClick={addTab}>Add Tab</button>
+        <button onClick={() => dispatch(addTabToPane(paneId))}>Add Tab</button>
         <br/>
         {tabComponents}
       </div>
@@ -20,4 +22,10 @@ class Pane extends Component {
   }
 }
 
-export default Pane;
+const mapStateToProps = function(state, existingProps) {
+  return {
+    pane: state.panes[existingProps.paneId]
+  }
+}
+
+export default connect(mapStateToProps)(Pane);

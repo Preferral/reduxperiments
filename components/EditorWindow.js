@@ -1,24 +1,20 @@
 import React, { Component } from 'react'
-
+import { connect } from 'react-redux'
 import Pane from './Pane.js'
-
+import { addPaneToWindow } from '../actions.js'
 
 class EditorWindow extends Component {
 
   render() {
-    const { panes } = this.props;
-
-    const paneComponents = panes.map((pane) => {
-      return <Pane
-        addTab={() => this.props.addTabToPane(pane.key)}
-        tabIds={pane.tabIds}
-        key={pane.key}
-      />
+    console.log("Rendering an EditorWindow");
+    const { dispatch, editorWindow, editorWindowId } = this.props;
+    const paneComponents = editorWindow.paneIds.map((paneId) => {
+      return <Pane paneId={paneId}/>
     });
 
     return (
       <div className="window">
-        <button onClick={this.props.addPane}>Add Pane</button>
+        <button onClick={() => dispatch(addPaneToWindow(editorWindowId))}>Add Pane</button>
         <br/>
         {paneComponents}
       </div>
@@ -28,4 +24,10 @@ class EditorWindow extends Component {
 
 }
 
-export default EditorWindow
+const mapStateToProps = function(state, existingProps) {
+  return {
+    editorWindow: state.windows[existingProps.editorWindowId]
+  };
+}
+
+export default connect(mapStateToProps)(EditorWindow);

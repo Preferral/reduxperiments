@@ -6,7 +6,7 @@ class Tab extends Component {
 
   render() {
     console.log("Rendering a tab component");
-    const { dispatch, fileBufferId, fileBuffer } = this.props;
+    const { dispatch, fileBufferId, fileBuffer, fileBufferKeys, tabId } = this.props;
     let textarea = null;
     if(fileBufferId) {
       textarea = (
@@ -22,12 +22,11 @@ class Tab extends Component {
       )
     }
 
-
     return (
       <div className="tab">
-        <select onChange={(e) => dispatch(loadFileBufferInTab(this.props.tabId, e.target.value))}>
+        <select onChange={(e) => dispatch(loadFileBufferInTab(tabId, e.target.value))}>
           <option>Select a FileBuffer</option>
-          { this.props.fileBufferKeys.map((key) => <option value={key}>{key}</option>) }
+          { fileBufferKeys.map((key) => <option value={key}>{key}</option>) }
         </select>
         {textarea}
       </div>
