@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect';
 
 import { addWindow } from '../actions.js'
-import EditorWindow from '../components/Window.js'
+import EditorWindow from '../components/EditorWindow.js'
 import { addPaneToWindow, addTabToPane,addFileBuffer } from '../actions.js'
 
 
@@ -46,10 +46,7 @@ const mapStateToProps = createSelector(
         const mappedWindow = Object.assign({}, oldWindow);
         mappedWindow.key = id;
         mappedWindow.panes = oldWindow.paneIds.map((paneId) => {
-          const oldPane = panes[paneId];
-          const mappedPane = Object.assign({}, oldPane);
-          mappedPane.key = paneId;
-          return mappedPane;
+          return Object.assign({}, panes[paneId], { key: paneId });
         });
         return mappedWindow;
       })
